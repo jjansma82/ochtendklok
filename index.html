@@ -1,67 +1,1108 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#2563eb">
-<title>Ochtendklok</title>
-<style>
-:root{--bg:#334155;--panel:rgba(15,23,42,.24);--text:#fff;--muted:rgba(255,255,255,.76)}
-*{box-sizing:border-box} html,body{width:100%;height:100%;margin:0} body{overflow:hidden;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;transition:background-color .8s ease}
-main{height:100svh;padding:clamp(18px,2.2vw,42px);display:grid;grid-template-columns:minmax(420px,1.05fr) minmax(500px,.95fr);gap:clamp(24px,3vw,64px);align-items:center}
-.clock-side{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}.clock{position:relative;width:min(67vh,48vw);aspect-ratio:1;border-radius:50%;background:#fff;color:#172033;box-shadow:0 26px 70px rgba(0,0,0,.28),inset 0 0 0 10px rgba(15,23,42,.12);border:clamp(6px,1vw,14px) solid rgba(255,255,255,.48)}
-.tick{position:absolute;left:50%;top:50%;width:2px;height:6px;background:#64748b;transform-origin:50% calc(50% + var(--radius));transform:translate(-50%,-50%) rotate(var(--angle)) translateY(calc(-1 * var(--radius)))}
-.tick.major{width:4px;height:13px;background:#172033;border-radius:4px}.number{position:absolute;left:50%;top:50%;font-size:clamp(22px,3.2vh,42px);font-weight:800;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-40.3%) rotate(calc(-1 * var(--angle)))}
-.hand{position:absolute;left:50%;bottom:50%;transform-origin:bottom center;border-radius:999px}.hour{width:clamp(8px,1vh,13px);height:25%;background:#172033}.minute{width:clamp(6px,.7vh,9px);height:35%;background:#334155}.second{width:3px;height:39%;background:#dc2626}.pin{position:absolute;left:50%;top:50%;width:clamp(18px,2.2vh,28px);aspect-ratio:1;border-radius:50%;background:#172033;border:4px solid #fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px #0004}
-.date{margin-top:20px;font-size:clamp(20px,2vw,32px);font-weight:700;text-transform:capitalize;text-shadow:0 2px 8px #0004}.sound-state{margin-top:8px;font-size:clamp(14px,1.2vw,19px);color:var(--muted)}
-.panel{background:var(--panel);border:1px solid rgba(255,255,255,.18);border-radius:32px;padding:clamp(22px,2.4vw,44px);box-shadow:0 26px 70px rgba(0,0,0,.18);backdrop-filter:blur(10px)}
-.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:clamp(12px,1vw,16px);font-weight:800;color:var(--muted)}.now{display:flex;align-items:center;gap:20px;margin:12px 0 26px}.now-icon{font-size:clamp(46px,5vw,78px)}.now-title{font-size:clamp(32px,3.5vw,58px);line-height:1.04;margin:0;font-weight:900}.now-time{margin-top:7px;color:var(--muted);font-size:clamp(18px,1.4vw,24px);font-weight:700}
-.tasks{display:grid;gap:12px}.task{display:grid;grid-template-columns:54px 1fr auto;gap:14px;align-items:center;padding:13px 16px;border-radius:19px;background:rgba(15,23,42,.2);border:2px solid transparent;opacity:.76;transition:.35s}.task .icon{font-size:30px;text-align:center}.task .label{font-size:clamp(18px,1.45vw,25px);font-weight:800;line-height:1.12}.task .time{font-size:clamp(14px,1.05vw,18px);font-weight:700;color:var(--muted);white-space:nowrap}.task.active{background:#fff;color:#172033;opacity:1;border-color:#fff;transform:scale(1.018);box-shadow:0 14px 34px rgba(0,0,0,.2)}.task.active .time{color:#475569}.task.done{opacity:.48}.task.done .icon{font-size:0}.task.done .icon::after{content:'✓';font-size:30px;font-weight:900}.subtasks{font-size:.76em;font-weight:700;opacity:.72;margin-top:4px}
-#soundGate{position:fixed;inset:0;background:rgba(15,23,42,.84);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(10px)}#soundGate.hidden{display:none}.gate-card{max-width:620px;margin:24px;background:#fff;color:#172033;padding:42px;border-radius:30px;text-align:center;box-shadow:0 30px 80px #0008}.gate-card h2{font-size:38px;margin:0 0 12px}.gate-card p{font-size:20px;line-height:1.5}.gate-card button{font:inherit;font-weight:900;font-size:22px;color:#fff;background:#2563eb;border:0;border-radius:16px;padding:17px 28px;cursor:pointer}.hint{font-size:15px!important;color:#64748b}.flash::after{content:'';position:fixed;inset:0;background:#fff;animation:flash .8s ease-out;pointer-events:none;z-index:10}@keyframes flash{from{opacity:.75}to{opacity:0}}
-@media(max-width:900px){body{overflow:auto}main{height:auto;min-height:100svh;grid-template-columns:1fr}.clock{width:min(66vh,86vw)}.panel{margin-bottom:20px}}@media(max-height:700px) and (min-width:901px){main{padding:14px}.clock{width:min(62vh,44vw)}.task{padding:8px 13px}.tasks{gap:8px}.now{margin:8px 0 15px}.panel{padding:20px}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Ochtendklok</title>
+
+  <style>
+    :root {
+      --achtergrond: #334155;
+      --tekst: #ffffff;
+      --kaart: rgba(15, 23, 42, 0.28);
+      --kaart-rand: rgba(255, 255, 255, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      min-height: 100%;
+      margin: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      font-family:
+        Inter,
+        ui-sans-serif,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      color: var(--tekst);
+      background: var(--achtergrond);
+      transition: background-color 0.8s ease;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .pagina {
+      position: relative;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .dashboard {
+      width: 100%;
+      max-width: 1800px;
+      min-height: calc(100vh - 40px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(420px, 0.9fr) minmax(600px, 1.1fr);
+      gap: 22px;
+      align-items: center;
+    }
+
+    /* Linkerkant met klok */
+
+    .klok-gedeelte {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 0;
+    }
+
+    .analoge-klok {
+      position: relative;
+      width: min(58vh, 44vw, 620px);
+      aspect-ratio: 1;
+      flex-shrink: 0;
+      overflow: hidden;
+      border: 12px solid rgba(255, 255, 255, 0.42);
+      border-radius: 50%;
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow:
+        0 24px 70px rgba(15, 23, 42, 0.38),
+        inset 0 0 0 4px rgba(15, 23, 42, 0.08);
+    }
+
+    .streepje-houder {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .streepje {
+      position: absolute;
+      top: 1.7%;
+      left: 50%;
+      width: 3px;
+      height: 11px;
+      border-radius: 999px;
+      background: #475569;
+      transform: translateX(-50%);
+    }
+
+    .streepje.uur {
+      width: 5px;
+      height: 19px;
+      background: #0f172a;
+    }
+
+    .cijfer {
+      position: absolute;
+      z-index: 2;
+      font-size: clamp(20px, 2.1vw, 34px);
+      font-weight: 900;
+      line-height: 1;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .wijzer {
+      position: absolute;
+      z-index: 4;
+      bottom: 50%;
+      left: 50%;
+      border-radius: 999px;
+      transform-origin: 50% 100%;
+    }
+
+    .uurwijzer {
+      width: 12px;
+      height: 25%;
+      background: #0f172a;
+    }
+
+    .minuutwijzer {
+      width: 8px;
+      height: 35%;
+      background: #475569;
+    }
+
+    .secondewijzer {
+      z-index: 5;
+      width: 3px;
+      height: 39%;
+      background: #dc2626;
+    }
+
+    .middelpunt {
+      position: absolute;
+      z-index: 6;
+      top: 50%;
+      left: 50%;
+      width: 25px;
+      height: 25px;
+      border: 4px solid #ffffff;
+      border-radius: 50%;
+      background: #0f172a;
+      transform: translate(-50%, -50%);
+    }
+
+    .digitale-tijd {
+      margin-top: 14px;
+      font-size: clamp(38px, 5vw, 72px);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.02em;
+      line-height: 1;
+      text-shadow: 0 3px 15px rgba(15, 23, 42, 0.25);
+    }
+
+    .datum {
+      margin-top: 10px;
+      font-size: clamp(18px, 2vw, 28px);
+      font-weight: 800;
+      text-align: center;
+      text-transform: capitalize;
+    }
+
+    .geluid-status {
+      margin-top: 6px;
+      color: rgba(255, 255, 255, 0.78);
+      font-size: 15px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    /* Rechterkant */
+
+    .ochtendgedeelte {
+      display: grid;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .kaart {
+      border: 1px solid var(--kaart-rand);
+      border-radius: 30px;
+      background: var(--kaart);
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.22);
+      backdrop-filter: blur(8px);
+    }
+
+    .planning-kaart {
+      padding: 24px;
+    }
+
+    .klein-label {
+      color: rgba(255, 255, 255, 0.72);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+    }
+
+    .huidige-taak {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .huidige-taak-icoon {
+      flex-shrink: 0;
+      font-size: clamp(48px, 5vw, 72px);
+    }
+
+    .huidige-taak h1 {
+      margin: 0;
+      font-size: clamp(30px, 3vw, 48px);
+      font-weight: 950;
+      line-height: 1.08;
+    }
+
+    .huidige-tijdvak {
+      margin-top: 5px;
+      color: rgba(255, 255, 255, 0.76);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .planning {
+      display: grid;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .planning-regel {
+      display: grid;
+      grid-template-columns: 44px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 15px;
+      border-radius: 17px;
+      background: rgba(15, 23, 42, 0.18);
+      color: rgba(255, 255, 255, 0.82);
+    }
+
+    .planning-regel.actief {
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+    }
+
+    .planning-regel.klaar {
+      opacity: 0.72;
+    }
+
+    .planning-icoon {
+      font-size: 25px;
+      text-align: center;
+    }
+
+    .planning-titel {
+      min-width: 0;
+      font-size: 16px;
+      font-weight: 900;
+    }
+
+    .planning-tijd {
+      color: rgba(255, 255, 255, 0.64);
+      font-size: 15px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .planning-regel.actief .planning-tijd {
+      color: #64748b;
+    }
+
+    .takenlijsten {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .taken-kaart {
+      padding: 20px;
+    }
+
+    .persoon-kop {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .persoon-icoon {
+      font-size: 34px;
+    }
+
+    .persoon-kop h2 {
+      margin: 0;
+      font-size: 27px;
+      font-weight: 950;
+    }
+
+    .gymdag {
+      margin-left: auto;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.2);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .takenlijst {
+      display: grid;
+      gap: 9px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .taak-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(15, 23, 42, 0.18);
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.25;
+      cursor: pointer;
+      transition:
+        background-color 0.2s ease,
+        opacity 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .taak-label:hover {
+      background: rgba(15, 23, 42, 0.28);
+      transform: translateY(-1px);
+    }
+
+    .taak-label input {
+      width: 24px;
+      height: 24px;
+      margin: 0;
+      flex-shrink: 0;
+      accent-color: #22c55e;
+      cursor: pointer;
+    }
+
+    .taak-label:has(input:checked) {
+      opacity: 0.56;
+      background: rgba(15, 23, 42, 0.1);
+    }
+
+    .taak-label:has(input:checked) span {
+      text-decoration: line-through;
+    }
+
+    /* Scherm buiten de ochtendroutine */
+
+    .gewone-klok-modus .dashboard {
+      grid-template-columns: 1fr;
+    }
+
+    .gewone-klok-modus .ochtendgedeelte {
+      display: none;
+    }
+
+    .gewone-klok-modus .analoge-klok {
+      width: min(65vh, 72vw, 680px);
+    }
+
+    /* Startvenster voor geluid */
+
+    .geluid-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(2, 6, 23, 0.84);
+      backdrop-filter: blur(10px);
+    }
+
+    .geluid-overlay.verborgen {
+      display: none;
+    }
+
+    .geluid-venster {
+      width: min(100%, 570px);
+      padding: 35px;
+      border-radius: 30px;
+      background: #ffffff;
+      color: #0f172a;
+      text-align: center;
+      box-shadow: 0 30px 100px rgba(0, 0, 0, 0.45);
+    }
+
+    .geluid-venster .bel {
+      font-size: 60px;
+    }
+
+    .geluid-venster h2 {
+      margin: 8px 0 0;
+      font-size: clamp(30px, 5vw, 45px);
+      font-weight: 950;
+    }
+
+    .geluid-venster p {
+      margin: 18px 0 24px;
+      color: #475569;
+      font-size: 19px;
+      line-height: 1.55;
+    }
+
+    .startknop {
+      border: 0;
+      border-radius: 17px;
+      padding: 15px 24px;
+      background: #2563eb;
+      color: #ffffff;
+      font-size: 20px;
+      font-weight: 900;
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.3);
+    }
+
+    .startknop:hover {
+      background: #1d4ed8;
+    }
+
+    .startknop:focus-visible {
+      outline: 4px solid #93c5fd;
+      outline-offset: 3px;
+    }
+
+    /* Flits bij gong */
+
+    .gong-flits {
+      position: fixed;
+      inset: 0;
+      z-index: 90;
+      pointer-events: none;
+      background: rgba(255, 255, 255, 0.72);
+      animation: flits 0.8s ease-out forwards;
+    }
+
+    @keyframes flits {
+      0% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    /* Kleinere schermen */
+
+    @media (max-width: 1100px) {
+      body {
+        overflow: auto;
+      }
+
+      .dashboard {
+        grid-template-columns: 1fr;
+      }
+
+      .analoge-klok {
+        width: min(55vh, 76vw, 560px);
+      }
+
+      .gewone-klok-modus .analoge-klok {
+        width: min(65vh, 82vw, 650px);
+      }
+    }
+
+    @media (max-width: 700px) {
+      .pagina {
+        padding: 12px;
+      }
+
+      .dashboard {
+        min-height: calc(100vh - 24px);
+        gap: 16px;
+      }
+
+      .analoge-klok {
+        width: min(72vw, 430px);
+        border-width: 8px;
+      }
+
+      .digitale-tijd {
+        font-size: 44px;
+      }
+
+      .takenlijsten {
+        grid-template-columns: 1fr;
+      }
+
+      .planning-regel {
+        grid-template-columns: 36px minmax(0, 1fr);
+      }
+
+      .planning-tijd {
+        grid-column: 2;
+      }
+
+      .huidige-taak {
+        align-items: flex-start;
+      }
+
+      .huidige-taak-icoon {
+        font-size: 48px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-<div id="soundGate">
-  <div class="gate-card">
-    <h2>🔔 Ochtendklok starten</h2>
-    <p>Start de klok eenmaal om de gonggeluiden toe te staan. Daarna klinkt een gong om 07:10, 07:30, 07:40 en 07:50.</p>
-    <button id="startButton">Start met geluid</button>
-    <p class="hint">Gebruik op een toetsenbord de Enter- of spatiebalk.</p>
-  </div>
-</div>
-<main>
-  <section class="clock-side">
-    <div class="clock" id="clock" aria-label="Analoge klok">
-      <div class="hand hour" id="hourHand"></div><div class="hand minute" id="minuteHand"></div><div class="hand second" id="secondHand"></div><div class="pin"></div>
+  <div id="pagina" class="pagina">
+    <div id="gongFlits"></div>
+
+    <div id="geluidOverlay" class="geluid-overlay">
+      <div class="geluid-venster">
+        <div class="bel">🔔</div>
+        <h2>Ochtendklok starten</h2>
+
+        <p>
+          Klik één keer op de knop om het gonggeluid toe te staan.
+          De gong klinkt om 07:10, 07:30, 07:40 en 07:50.
+        </p>
+
+        <button id="startGeluid" class="startknop" type="button">
+          Start met geluid
+        </button>
+      </div>
     </div>
-    <div class="date" id="date"></div><div class="sound-state" id="soundState">🔇 Gong nog niet ingeschakeld</div>
-  </section>
-  <section class="panel">
-    <div class="eyebrow">Ochtendroutine</div>
-    <div class="now"><div class="now-icon" id="nowIcon">☀️</div><div><h1 class="now-title" id="nowTitle">Goedemorgen</h1><div class="now-time" id="nowTime"></div></div></div>
-    <div class="tasks" id="tasks"></div>
-  </section>
-</main>
-<script>
-const blocks=[
- {start:'07:00',end:'07:10',icon:'👕',title:'Aankleden',color:'#2563eb'},
- {start:'07:10',end:'07:30',icon:'🥣',title:'Ontbijten',color:'#16a34a'},
- {start:'07:30',end:'07:40',icon:'🍞',title:'Broodbakje klaarmaken',color:'#ca8a04'},
- {start:'07:40',end:'07:50',icon:'🪥',title:'Tandenpoetsen, bril poetsen en gel in je haar',short:'Tanden, bril en haar',color:'#ea580c'},
- {start:'07:50',end:'08:00',icon:'🎒',title:'Klaarmaken voor vertrek',color:'#dc2626'}
-];
-const $=id=>document.getElementById(id), toMin=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
-let audioContext=null,soundEnabled=false,lastGongKey='';
-function makeFace(){for(let i=0;i<60;i++){const tick=document.createElement('i');tick.className='tick'+(i%5===0?' major':'');tick.style.setProperty('--angle',`${i*6}deg`);tick.style.setProperty('--radius','45%');$('clock').appendChild(tick)}for(let n=1;n<=12;n++){const el=document.createElement('span');el.className='number';el.textContent=n;el.style.setProperty('--angle',`${n*30}deg`);$('clock').appendChild(el)}}
-function gong(){if(!audioContext)return;const now=audioContext.currentTime;[196,294,392].forEach((f,i)=>{const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.setValueAtTime(f,now);o.frequency.exponentialRampToValueAtTime(f*.985,now+2.8);g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(.12/(i+1),now+.03);g.gain.exponentialRampToValueAtTime(.0001,now+3);o.connect(g).connect(audioContext.destination);o.start(now);o.stop(now+3.1)});document.body.classList.remove('flash');void document.body.offsetWidth;document.body.classList.add('flash')}
-async function enableSound(){audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();await audioContext.resume();soundEnabled=true;$('soundGate').classList.add('hidden');$('soundState').textContent='🔔 Gong ingeschakeld';gong()}
-$('startButton').addEventListener('click',enableSound);document.addEventListener('keydown',e=>{if(!soundEnabled&&(e.key==='Enter'||e.key===' ')){e.preventDefault();enableSound()}});
-function getNow(){const demo=new URLSearchParams(location.search).get('demo');if(/^([01]\\d|2[0-3]):[0-5]\\d$/.test(demo||'')){const d=new Date(),[h,m]=demo.split(':').map(Number);d.setHours(h,m,20,0);return d}return new Date()}
-function render(){const now=getNow(),mins=now.getHours()*60+now.getMinutes(),active=blocks.findIndex(b=>mins>=toMin(b.start)&&mins<toMin(b.end));const h=((now.getHours()%12)+now.getMinutes()/60+now.getSeconds()/3600)*30,m=(now.getMinutes()+now.getSeconds()/60)*6,s=now.getSeconds()*6;$('hourHand').style.transform=`translateX(-50%) rotate(${h}deg)`;$('minuteHand').style.transform=`translateX(-50%) rotate(${m}deg)`;$('secondHand').style.transform=`translateX(-50%) rotate(${s}deg)`;$('date').textContent=now.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
- const b=blocks[active];document.body.style.setProperty('--bg',b?b.color:'#334155');document.querySelector('meta[name="theme-color"]').content=b?b.color:'#334155';$('nowIcon').textContent=b?b.icon:(mins<420?'☀️':'✅');$('nowTitle').textContent=b?(b.short||b.title):(mins<420?'Goedemorgen':'De ochtendroutine is klaar');$('nowTime').textContent=b?`${b.start} tot ${b.end}`:'';$('tasks').innerHTML=blocks.map((x,i)=>`<div class="task ${i===active?'active':i<active?'done':''}"><div class="icon">${x.icon}</div><div><div class="label">${x.title}</div>${i===3?'<div class="subtasks">Tanden • bril • haar</div>':''}</div><div class="time">${x.start} – ${x.end}${i===active?' · NU':''}</div></div>`).join('');
- const key=`${now.toDateString()}-${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;if(soundEnabled&&[430,450,460,470].includes(mins)&&now.getSeconds()<2&&key!==lastGongKey){lastGongKey=key;gong()}}
-makeFace();render();setInterval(render,250);
-</script>
+
+    <main class="dashboard">
+      <section class="klok-gedeelte">
+        <div id="analogeKlok" class="analoge-klok" aria-label="Analoge klok">
+          <div id="streepjes"></div>
+          <div id="cijfers"></div>
+
+          <div id="uurwijzer" class="wijzer uurwijzer"></div>
+          <div id="minuutwijzer" class="wijzer minuutwijzer"></div>
+          <div id="secondewijzer" class="wijzer secondewijzer"></div>
+
+          <div class="middelpunt"></div>
+        </div>
+
+        <div id="digitaleTijd" class="digitale-tijd">00:00:00</div>
+        <div id="datum" class="datum"></div>
+        <div id="geluidStatus" class="geluid-status">
+          🔇 Gong nog niet ingeschakeld
+        </div>
+      </section>
+
+      <section id="ochtendgedeelte" class="ochtendgedeelte">
+        <div class="kaart planning-kaart">
+          <div class="klein-label">Nu doen</div>
+
+          <div class="huidige-taak">
+            <div id="huidigeTaakIcoon" class="huidige-taak-icoon">☀️</div>
+
+            <div>
+              <h1 id="huidigeTaakTitel">Goedemorgen</h1>
+              <div id="huidigeTijdvak" class="huidige-tijdvak"></div>
+            </div>
+          </div>
+
+          <div id="planning" class="planning"></div>
+        </div>
+
+        <div class="takenlijsten">
+          <section class="kaart taken-kaart">
+            <div class="persoon-kop">
+              <span class="persoon-icoon">👦</span>
+              <h2>Tijn</h2>
+              <span id="gymdagLabel" class="gymdag" hidden>Gymdag</span>
+            </div>
+
+            <ul class="takenlijst">
+              <li>
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="tijn"
+                    data-taak="ondergoed-sokken"
+                  >
+                  <span>Schoon ondergoed &amp; sokken</span>
+                </label>
+              </li>
+
+              <li>
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="tijn"
+                    data-taak="tas"
+                  >
+                  <span>Tas ingepakt</span>
+                </label>
+              </li>
+
+              <li id="gymtasTaak">
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="tijn"
+                    data-taak="gymtas"
+                  >
+                  <span>Gymtas ingepakt</span>
+                </label>
+              </li>
+
+              <li>
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="tijn"
+                    data-taak="gel"
+                  >
+                  <span>Gel in mijn haar</span>
+                </label>
+              </li>
+            </ul>
+          </section>
+
+          <section class="kaart taken-kaart">
+            <div class="persoon-kop">
+              <span class="persoon-icoon">👧</span>
+              <h2>Merte</h2>
+            </div>
+
+            <ul class="takenlijst">
+              <li>
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="merte"
+                    data-taak="ondergoed-sokken"
+                  >
+                  <span>Schoon ondergoed &amp; sokken</span>
+                </label>
+              </li>
+
+              <li>
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="merte"
+                    data-taak="tas"
+                  >
+                  <span>Tas ingepakt</span>
+                </label>
+              </li>
+
+              <li>
+                <label class="taak-label">
+                  <input
+                    type="checkbox"
+                    data-persoon="merte"
+                    data-taak="bril"
+                  >
+                  <span>Bril gepoetst en opgezet</span>
+                </label>
+              </li>
+            </ul>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    /*
+     * Instellingen voor de ochtendroutine.
+     *
+     * De tijden zijn opgeslagen als het aantal minuten vanaf middernacht.
+     * 07:00 is bijvoorbeeld 7 x 60 = 420.
+     */
+    const onderdelen = [
+      {
+        start: 420,
+        einde: 430,
+        tijd: "07:00 – 07:10",
+        icoon: "👕",
+        titel: "Aankleden",
+        kleur: "#2563eb"
+      },
+      {
+        start: 430,
+        einde: 450,
+        tijd: "07:10 – 07:30",
+        icoon: "🥣",
+        titel: "Ontbijten",
+        kleur: "#16a34a"
+      },
+      {
+        start: 450,
+        einde: 460,
+        tijd: "07:30 – 07:40",
+        icoon: "🍞",
+        titel: "Broodbakje klaarmaken",
+        kleur: "#ca8a04"
+      },
+      {
+        start: 460,
+        einde: 470,
+        tijd: "07:40 – 07:50",
+        icoon: "🪥",
+        titel: "Tandenpoetsen, bril poetsen en gel in je haar",
+        korteTitel: "Tanden, bril en haar",
+        kleur: "#ea580c"
+      },
+      {
+        start: 470,
+        einde: 480,
+        tijd: "07:50 – 08:00",
+        icoon: "🎒",
+        titel: "Klaarmaken voor vertrek",
+        kleur: "#dc2626"
+      }
+    ];
+
+    /*
+     * De gong klinkt bij de overgang naar het volgende onderdeel.
+     */
+    const gongMomenten = [430, 450, 460, 470];
+
+    let audioContext = null;
+    let geluidIngeschakeld = false;
+    let laatstAfgespeeldeGong = "";
+    let laatstGeladenDag = "";
+
+    const pagina = document.getElementById("pagina");
+    const streepjesElement = document.getElementById("streepjes");
+    const cijfersElement = document.getElementById("cijfers");
+    const uurwijzer = document.getElementById("uurwijzer");
+    const minuutwijzer = document.getElementById("minuutwijzer");
+    const secondewijzer = document.getElementById("secondewijzer");
+    const digitaleTijd = document.getElementById("digitaleTijd");
+    const datumElement = document.getElementById("datum");
+    const planningElement = document.getElementById("planning");
+    const huidigeTaakIcoon = document.getElementById("huidigeTaakIcoon");
+    const huidigeTaakTitel = document.getElementById("huidigeTaakTitel");
+    const huidigeTijdvak = document.getElementById("huidigeTijdvak");
+    const gymtasTaak = document.getElementById("gymtasTaak");
+    const gymdagLabel = document.getElementById("gymdagLabel");
+    const geluidOverlay = document.getElementById("geluidOverlay");
+    const geluidStatus = document.getElementById("geluidStatus");
+    const startGeluidKnop = document.getElementById("startGeluid");
+    const gongFlits = document.getElementById("gongFlits");
+
+    /*
+     * Maak 60 streepjes langs de buitenrand.
+     * Elk vijfde streepje is groter en geeft een uurpositie aan.
+     */
+    function maakStreepjes() {
+      for (let index = 0; index < 60; index++) {
+        const houder = document.createElement("div");
+        houder.className = "streepje-houder";
+        houder.style.transform = `rotate(${index * 6}deg)`;
+
+        const streepje = document.createElement("span");
+        streepje.className =
+          index % 5 === 0 ? "streepje uur" : "streepje";
+
+        houder.appendChild(streepje);
+        streepjesElement.appendChild(houder);
+      }
+    }
+
+    /*
+     * Plaats de cijfers dicht bij de buitenrand,
+     * maar binnen de minutenstreepjes.
+     */
+    function maakCijfers() {
+      for (let nummer = 1; nummer <= 12; nummer++) {
+        const hoek = nummer * 30 * Math.PI / 180;
+        const links = 50 + Math.sin(hoek) * 37;
+        const boven = 50 - Math.cos(hoek) * 37;
+
+        const cijfer = document.createElement("span");
+        cijfer.className = "cijfer";
+        cijfer.textContent = nummer;
+        cijfer.style.left = `${links}%`;
+        cijfer.style.top = `${boven}%`;
+
+        cijfersElement.appendChild(cijfer);
+      }
+    }
+
+    function datumSleutel(datum) {
+      const jaar = datum.getFullYear();
+      const maand = String(datum.getMonth() + 1).padStart(2, "0");
+      const dag = String(datum.getDate()).padStart(2, "0");
+
+      return `${jaar}-${maand}-${dag}`;
+    }
+
+    /*
+     * De afgevinkte taken worden per dag opgeslagen in de browser.
+     * Op een nieuwe dag beginnen alle vinkjes weer leeg.
+     */
+    function laadTakenVoorVandaag(vandaag) {
+      if (laatstGeladenDag === vandaag) {
+        return;
+      }
+
+      laatstGeladenDag = vandaag;
+
+      document.querySelectorAll('input[type="checkbox"][data-taak]')
+        .forEach((checkbox) => {
+          const sleutel =
+            `ochtendklok-${vandaag}-${checkbox.dataset.persoon}-${checkbox.dataset.taak}`;
+
+          checkbox.checked = localStorage.getItem(sleutel) === "ja";
+        });
+    }
+
+    function slaTaakOp(checkbox) {
+      const vandaag = datumSleutel(new Date());
+      const sleutel =
+        `ochtendklok-${vandaag}-${checkbox.dataset.persoon}-${checkbox.dataset.taak}`;
+
+      if (checkbox.checked) {
+        localStorage.setItem(sleutel, "ja");
+      } else {
+        localStorage.removeItem(sleutel);
+      }
+    }
+
+    document.querySelectorAll('input[type="checkbox"][data-taak]')
+      .forEach((checkbox) => {
+        checkbox.addEventListener("change", () => slaTaakOp(checkbox));
+      });
+
+    /*
+     * Maak een gong met de Web Audio API.
+     * Hierdoor is geen apart geluidsbestand nodig.
+     */
+    function speelGong() {
+      if (!audioContext || !geluidIngeschakeld) {
+        return;
+      }
+
+      const start = audioContext.currentTime;
+
+      [196, 294, 392].forEach((frequentie, index) => {
+        const oscillator = audioContext.createOscillator();
+        const volume = audioContext.createGain();
+
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(frequentie, start);
+        oscillator.frequency.exponentialRampToValueAtTime(
+          frequentie * 0.985,
+          start + 2.8
+        );
+
+        volume.gain.setValueAtTime(0.0001, start);
+        volume.gain.exponentialRampToValueAtTime(
+          0.13 / (index + 1),
+          start + 0.03
+        );
+        volume.gain.exponentialRampToValueAtTime(
+          0.0001,
+          start + 3
+        );
+
+        oscillator.connect(volume);
+        volume.connect(audioContext.destination);
+
+        oscillator.start(start);
+        oscillator.stop(start + 3.1);
+      });
+
+      gongFlits.className = "gong-flits";
+
+      window.setTimeout(() => {
+        gongFlits.className = "";
+      }, 850);
+    }
+
+    async function schakelGeluidIn() {
+      const AudioContextClass =
+        window.AudioContext || window.webkitAudioContext;
+
+      if (!AudioContextClass) {
+        geluidOverlay.classList.add("verborgen");
+        geluidStatus.textContent =
+          "🔇 Deze browser ondersteunt het gonggeluid niet";
+        return;
+      }
+
+      audioContext = audioContext || new AudioContextClass();
+
+      if (audioContext.state === "suspended") {
+        await audioContext.resume();
+      }
+
+      geluidIngeschakeld = true;
+      geluidOverlay.classList.add("verborgen");
+      geluidStatus.textContent = "🔔 Gong ingeschakeld";
+
+      /*
+       * Speel bij het starten een testgong,
+       * zodat je direct hoort dat het geluid werkt.
+       */
+      speelGong();
+    }
+
+    startGeluidKnop.addEventListener("click", schakelGeluidIn);
+
+    function maakPlanning(actieveIndex) {
+      planningElement.innerHTML = "";
+
+      onderdelen.forEach((onderdeel, index) => {
+        const regel = document.createElement("div");
+        regel.className = "planning-regel";
+
+        if (index === actieveIndex) {
+          regel.classList.add("actief");
+        }
+
+        if (actieveIndex >= 0 && index < actieveIndex) {
+          regel.classList.add("klaar");
+        }
+
+        const icoon = document.createElement("div");
+        icoon.className = "planning-icoon";
+        icoon.textContent =
+          actieveIndex >= 0 && index < actieveIndex
+            ? "✓"
+            : onderdeel.icoon;
+
+        const titel = document.createElement("div");
+        titel.className = "planning-titel";
+        titel.textContent = onderdeel.titel;
+
+        const tijd = document.createElement("div");
+        tijd.className = "planning-tijd";
+        tijd.textContent =
+          onderdeel.tijd + (index === actieveIndex ? " · NU" : "");
+
+        regel.appendChild(icoon);
+        regel.appendChild(titel);
+        regel.appendChild(tijd);
+
+        planningElement.appendChild(regel);
+      });
+    }
+
+    function werkKlokBij() {
+      const nu = new Date();
+
+      const uren = nu.getHours();
+      const minuten = nu.getMinutes();
+      const seconden = nu.getSeconds();
+      const dagVanWeek = nu.getDay();
+      const minutenSindsMiddernacht = uren * 60 + minuten;
+
+      /*
+       * JavaScript gebruikt:
+       * 0 = zondag
+       * 1 = maandag
+       * ...
+       * 6 = zaterdag
+       */
+      const isSchooldag = dagVanWeek >= 1 && dagVanWeek <= 5;
+      const isOchtendroutine =
+        isSchooldag &&
+        minutenSindsMiddernacht >= 420 &&
+        minutenSindsMiddernacht < 480;
+
+      const actieveIndex = onderdelen.findIndex((onderdeel) => {
+        return (
+          minutenSindsMiddernacht >= onderdeel.start &&
+          minutenSindsMiddernacht < onderdeel.einde
+        );
+      });
+
+      /*
+       * Werk de digitale tijd en datum bij.
+       */
+      digitaleTijd.textContent = nu.toLocaleTimeString("nl-NL", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+
+      datumElement.textContent = nu.toLocaleDateString("nl-NL", {
+        weekday: "long",
+        day: "numeric",
+        month: "long"
+      });
+
+      /*
+       * Bereken de stand van de wijzers.
+       */
+      const secondeHoek = seconden * 6;
+      const minuutHoek = (minuten + seconden / 60) * 6;
+      const uurHoek = ((uren % 12) + minuten / 60) * 30;
+
+      secondewijzer.style.transform =
+        `translateX(-50%) rotate(${secondeHoek}deg)`;
+
+      minuutwijzer.style.transform =
+        `translateX(-50%) rotate(${minuutHoek}deg)`;
+
+      uurwijzer.style.transform =
+        `translateX(-50%) rotate(${uurHoek}deg)`;
+
+      /*
+       * Toon de uitgebreide ochtendklok alleen op schooldagen
+       * tussen 07:00 en 08:00.
+       */
+      if (isOchtendroutine && actieveIndex >= 0) {
+        pagina.classList.remove("gewone-klok-modus");
+
+        const huidigOnderdeel = onderdelen[actieveIndex];
+
+        document.body.style.backgroundColor = huidigOnderdeel.kleur;
+        huidigeTaakIcoon.textContent = huidigOnderdeel.icoon;
+        huidigeTaakTitel.textContent =
+          huidigOnderdeel.korteTitel || huidigOnderdeel.titel;
+        huidigeTijdvak.textContent = huidigOnderdeel.tijd;
+
+        maakPlanning(actieveIndex);
+      } else {
+        pagina.classList.add("gewone-klok-modus");
+        document.body.style.backgroundColor = "#334155";
+      }
+
+      /*
+       * Gymtas wordt alleen getoond op dinsdag en donderdag.
+       */
+      const isGymdag = dagVanWeek === 2 || dagVanWeek === 4;
+
+      gymtasTaak.hidden = !isGymdag;
+      gymdagLabel.hidden = !isGymdag;
+
+      /*
+       * Laad de vinkjes van vandaag.
+       */
+      const vandaag = datumSleutel(nu);
+      laadTakenVoorVandaag(vandaag);
+
+      /*
+       * Speel precies eenmaal een gong bij ieder overgangsmoment.
+       */
+      const gongSleutel =
+        `${vandaag}-${uren}-${minuten}`;
+
+      if (
+        isSchooldag &&
+        geluidIngeschakeld &&
+        gongMomenten.includes(minutenSindsMiddernacht) &&
+        seconden < 2 &&
+        laatstAfgespeeldeGong !== gongSleutel
+      ) {
+        laatstAfgespeeldeGong = gongSleutel;
+        speelGong();
+      }
+    }
+
+    /*
+     * Bouw de klok op en start het bijwerken.
+     */
+    maakStreepjes();
+    maakCijfers();
+    maakPlanning(-1);
+    werkKlokBij();
+
+    window.setInterval(werkKlokBij, 1000);
+  </script>
 </body>
 </html>
