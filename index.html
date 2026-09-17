@@ -1,167 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2563eb">
 <title>Ochtendklok</title>
-
 <style>
-
-html, body{
-    margin:0;
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    font-family:Arial, Helvetica, sans-serif;
-}
-
-body{
-    transition:background-color 1s ease;
-}
-
-.container{
-    height:100%;
-    display:flex;
-    flex-direction:column;
-    justify-content:center;
-    align-items:center;
-}
-
-.clock{
-    width:min(70vw,70vh);
-    height:min(70vw,70vh);
-    border-radius:50%;
-    background:white;
-    position:relative;
-    box-shadow:0 0 40px rgba(0,0,0,.25);
-}
-
-.number{
-    position:absolute;
-    font-size:2.2rem;
-    font-weight:bold;
-    color:#222;
-    transform:translate(-50%,-50%);
-}
-
-.hand{
-    position:absolute;
-    left:50%;
-    bottom:50%;
-    transform-origin:bottom center;
-}
-
-.hour{
-    width:10px;
-    height:24%;
-    background:#222;
-    border-radius:20px;
-}
-
-.minute{
-    width:6px;
-    height:34%;
-    background:#333;
-    border-radius:20px;
-}
-
-.second{
-    width:3px;
-    height:38%;
-    background:#d40000;
-    border-radius:20px;
-}
-
-.center{
-    position:absolute;
-    left:50%;
-    top:50%;
-    width:20px;
-    height:20px;
-    background:#222;
-    border-radius:50%;
-    transform:translate(-50%,-50%);
-}
-
-.activity{
-    margin-top:40px;
-    font-size:4rem;
-    font-weight:bold;
-    color:white;
-    text-align:center;
-    text-shadow:0 3px 10px rgba(0,0,0,.25);
-}
-
-.time{
-    margin-top:10px;
-    font-size:2rem;
-    color:white;
-}
-
-.schedule{
-    position:absolute;
-    top:20px;
-    left:20px;
-    color:white;
-    font-size:1.2rem;
-    line-height:1.8;
-    background:rgba(255,255,255,.15);
-    padding:15px 20px;
-    border-radius:12px;
-}
-
-.current{
-    font-weight:bold;
-}
-
+:root{--bg:#334155;--panel:rgba(15,23,42,.24);--text:#fff;--muted:rgba(255,255,255,.76)}
+*{box-sizing:border-box} html,body{width:100%;height:100%;margin:0} body{overflow:hidden;background:var(--bg);color:var(--text);font-family:Arial,Helvetica,sans-serif;transition:background-color .8s ease}
+main{height:100svh;padding:clamp(18px,2.2vw,42px);display:grid;grid-template-columns:minmax(420px,1.05fr) minmax(500px,.95fr);gap:clamp(24px,3vw,64px);align-items:center}
+.clock-side{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0}.clock{position:relative;width:min(67vh,48vw);aspect-ratio:1;border-radius:50%;background:#fff;color:#172033;box-shadow:0 26px 70px rgba(0,0,0,.28),inset 0 0 0 10px rgba(15,23,42,.12);border:clamp(6px,1vw,14px) solid rgba(255,255,255,.48)}
+.tick{position:absolute;left:50%;top:50%;width:2px;height:6px;background:#64748b;transform-origin:50% calc(50% + var(--radius));transform:translate(-50%,-50%) rotate(var(--angle)) translateY(calc(-1 * var(--radius)))}
+.tick.major{width:4px;height:13px;background:#172033;border-radius:4px}.number{position:absolute;left:50%;top:50%;font-size:clamp(22px,3.2vh,42px);font-weight:800;transform:translate(-50%,-50%) rotate(var(--angle)) translateY(-40.3%) rotate(calc(-1 * var(--angle)))}
+.hand{position:absolute;left:50%;bottom:50%;transform-origin:bottom center;border-radius:999px}.hour{width:clamp(8px,1vh,13px);height:25%;background:#172033}.minute{width:clamp(6px,.7vh,9px);height:35%;background:#334155}.second{width:3px;height:39%;background:#dc2626}.pin{position:absolute;left:50%;top:50%;width:clamp(18px,2.2vh,28px);aspect-ratio:1;border-radius:50%;background:#172033;border:4px solid #fff;transform:translate(-50%,-50%);box-shadow:0 2px 8px #0004}
+.date{margin-top:20px;font-size:clamp(20px,2vw,32px);font-weight:700;text-transform:capitalize;text-shadow:0 2px 8px #0004}.sound-state{margin-top:8px;font-size:clamp(14px,1.2vw,19px);color:var(--muted)}
+.panel{background:var(--panel);border:1px solid rgba(255,255,255,.18);border-radius:32px;padding:clamp(22px,2.4vw,44px);box-shadow:0 26px 70px rgba(0,0,0,.18);backdrop-filter:blur(10px)}
+.eyebrow{text-transform:uppercase;letter-spacing:.2em;font-size:clamp(12px,1vw,16px);font-weight:800;color:var(--muted)}.now{display:flex;align-items:center;gap:20px;margin:12px 0 26px}.now-icon{font-size:clamp(46px,5vw,78px)}.now-title{font-size:clamp(32px,3.5vw,58px);line-height:1.04;margin:0;font-weight:900}.now-time{margin-top:7px;color:var(--muted);font-size:clamp(18px,1.4vw,24px);font-weight:700}
+.tasks{display:grid;gap:12px}.task{display:grid;grid-template-columns:54px 1fr auto;gap:14px;align-items:center;padding:13px 16px;border-radius:19px;background:rgba(15,23,42,.2);border:2px solid transparent;opacity:.76;transition:.35s}.task .icon{font-size:30px;text-align:center}.task .label{font-size:clamp(18px,1.45vw,25px);font-weight:800;line-height:1.12}.task .time{font-size:clamp(14px,1.05vw,18px);font-weight:700;color:var(--muted);white-space:nowrap}.task.active{background:#fff;color:#172033;opacity:1;border-color:#fff;transform:scale(1.018);box-shadow:0 14px 34px rgba(0,0,0,.2)}.task.active .time{color:#475569}.task.done{opacity:.48}.task.done .icon{font-size:0}.task.done .icon::after{content:'✓';font-size:30px;font-weight:900}.subtasks{font-size:.76em;font-weight:700;opacity:.72;margin-top:4px}
+#soundGate{position:fixed;inset:0;background:rgba(15,23,42,.84);display:flex;align-items:center;justify-content:center;z-index:20;backdrop-filter:blur(10px)}#soundGate.hidden{display:none}.gate-card{max-width:620px;margin:24px;background:#fff;color:#172033;padding:42px;border-radius:30px;text-align:center;box-shadow:0 30px 80px #0008}.gate-card h2{font-size:38px;margin:0 0 12px}.gate-card p{font-size:20px;line-height:1.5}.gate-card button{font:inherit;font-weight:900;font-size:22px;color:#fff;background:#2563eb;border:0;border-radius:16px;padding:17px 28px;cursor:pointer}.hint{font-size:15px!important;color:#64748b}.flash::after{content:'';position:fixed;inset:0;background:#fff;animation:flash .8s ease-out;pointer-events:none;z-index:10}@keyframes flash{from{opacity:.75}to{opacity:0}}
+@media(max-width:900px){body{overflow:auto}main{height:auto;min-height:100svh;grid-template-columns:1fr}.clock{width:min(66vh,86vw)}.panel{margin-bottom:20px}}@media(max-height:700px) and (min-width:901px){main{padding:14px}.clock{width:min(62vh,44vw)}.task{padding:8px 13px}.tasks{gap:8px}.now{margin:8px 0 15px}.panel{padding:20px}}
 </style>
 </head>
 <body>
-
-<div class="schedule" id="schedule"></div>
-
-<div class="container">
-
-    <div class="clock">
-
-        <div class="number" style="left:50%;top:8%;">12</div>
-        <div class="number" style="left:82%;top:18%;">1</div>
-        <div class="number" style="left:92%;top:50%;">3</div>
-        <div class="number" style="left:82%;top:82%;">5</div>
-        <div class="number" style="left:50%;top:92%;">6</div>
-        <div class="number" style="left:18%;top:82%;">7</div>
-        <div class="number" style="left:8%;top:50%;">9</div>
-        <div class="number" style="left:18%;top:18%;">11</div>
-
-        <div id="hour" class="hand hour"></div>
-        <div id="minute" class="hand minute"></div>
-        <div id="second" class="hand second"></div>
-
-        <div class="center"></div>
-
-    </div>
-
-    <div id="activity" class="activity"></div>
-    <div id="digitalTime" class="time"></div>
-
+<div id="soundGate">
+  <div class="gate-card">
+    <h2>🔔 Ochtendklok starten</h2>
+    <p>Start de klok eenmaal om de gonggeluiden toe te staan. Daarna klinkt een gong om 07:10, 07:30, 07:40 en 07:50.</p>
+    <button id="startButton">Start met geluid</button>
+    <p class="hint">Gebruik op een toetsenbord de Enter- of spatiebalk.</p>
+  </div>
 </div>
-
+<main>
+  <section class="clock-side">
+    <div class="clock" id="clock" aria-label="Analoge klok">
+      <div class="hand hour" id="hourHand"></div><div class="hand minute" id="minuteHand"></div><div class="hand second" id="secondHand"></div><div class="pin"></div>
+    </div>
+    <div class="date" id="date"></div><div class="sound-state" id="soundState">🔇 Gong nog niet ingeschakeld</div>
+  </section>
+  <section class="panel">
+    <div class="eyebrow">Ochtendroutine</div>
+    <div class="now"><div class="now-icon" id="nowIcon">☀️</div><div><h1 class="now-title" id="nowTitle">Goedemorgen</h1><div class="now-time" id="nowTime"></div></div></div>
+    <div class="tasks" id="tasks"></div>
+  </section>
+</main>
 <script>
-
-const blocks = [
-{
-start:"07:00",
-end:"07:10",
-label:"👕 AANKLEDEN",
-color:"#3498db"
-},
-{
-start:"07:10",
-end:"07:30",
-label:"🥣 ONTBIJTEN",
-color:"#2ecc71"
-},
-{
-start:"07:30",
-end:"
+const blocks=[
+ {start:'07:00',end:'07:10',icon:'👕',title:'Aankleden',color:'#2563eb'},
+ {start:'07:10',end:'07:30',icon:'🥣',title:'Ontbijten',color:'#16a34a'},
+ {start:'07:30',end:'07:40',icon:'🍞',title:'Broodbakje klaarmaken',color:'#ca8a04'},
+ {start:'07:40',end:'07:50',icon:'🪥',title:'Tandenpoetsen, bril poetsen en gel in je haar',short:'Tanden, bril en haar',color:'#ea580c'},
+ {start:'07:50',end:'08:00',icon:'🎒',title:'Klaarmaken voor vertrek',color:'#dc2626'}
+];
+const $=id=>document.getElementById(id), toMin=t=>{const[h,m]=t.split(':').map(Number);return h*60+m};
+let audioContext=null,soundEnabled=false,lastGongKey='';
+function makeFace(){for(let i=0;i<60;i++){const tick=document.createElement('i');tick.className='tick'+(i%5===0?' major':'');tick.style.setProperty('--angle',`${i*6}deg`);tick.style.setProperty('--radius','45%');$('clock').appendChild(tick)}for(let n=1;n<=12;n++){const el=document.createElement('span');el.className='number';el.textContent=n;el.style.setProperty('--angle',`${n*30}deg`);$('clock').appendChild(el)}}
+function gong(){if(!audioContext)return;const now=audioContext.currentTime;[196,294,392].forEach((f,i)=>{const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.setValueAtTime(f,now);o.frequency.exponentialRampToValueAtTime(f*.985,now+2.8);g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(.12/(i+1),now+.03);g.gain.exponentialRampToValueAtTime(.0001,now+3);o.connect(g).connect(audioContext.destination);o.start(now);o.stop(now+3.1)});document.body.classList.remove('flash');void document.body.offsetWidth;document.body.classList.add('flash')}
+async function enableSound(){audioContext=audioContext||new(window.AudioContext||window.webkitAudioContext)();await audioContext.resume();soundEnabled=true;$('soundGate').classList.add('hidden');$('soundState').textContent='🔔 Gong ingeschakeld';gong()}
+$('startButton').addEventListener('click',enableSound);document.addEventListener('keydown',e=>{if(!soundEnabled&&(e.key==='Enter'||e.key===' ')){e.preventDefault();enableSound()}});
+function getNow(){const demo=new URLSearchParams(location.search).get('demo');if(/^([01]\\d|2[0-3]):[0-5]\\d$/.test(demo||'')){const d=new Date(),[h,m]=demo.split(':').map(Number);d.setHours(h,m,20,0);return d}return new Date()}
+function render(){const now=getNow(),mins=now.getHours()*60+now.getMinutes(),active=blocks.findIndex(b=>mins>=toMin(b.start)&&mins<toMin(b.end));const h=((now.getHours()%12)+now.getMinutes()/60+now.getSeconds()/3600)*30,m=(now.getMinutes()+now.getSeconds()/60)*6,s=now.getSeconds()*6;$('hourHand').style.transform=`translateX(-50%) rotate(${h}deg)`;$('minuteHand').style.transform=`translateX(-50%) rotate(${m}deg)`;$('secondHand').style.transform=`translateX(-50%) rotate(${s}deg)`;$('date').textContent=now.toLocaleDateString('nl-NL',{weekday:'long',day:'numeric',month:'long'});
+ const b=blocks[active];document.body.style.setProperty('--bg',b?b.color:'#334155');document.querySelector('meta[name="theme-color"]').content=b?b.color:'#334155';$('nowIcon').textContent=b?b.icon:(mins<420?'☀️':'✅');$('nowTitle').textContent=b?(b.short||b.title):(mins<420?'Goedemorgen':'De ochtendroutine is klaar');$('nowTime').textContent=b?`${b.start} tot ${b.end}`:'';$('tasks').innerHTML=blocks.map((x,i)=>`<div class="task ${i===active?'active':i<active?'done':''}"><div class="icon">${x.icon}</div><div><div class="label">${x.title}</div>${i===3?'<div class="subtasks">Tanden • bril • haar</div>':''}</div><div class="time">${x.start} – ${x.end}${i===active?' · NU':''}</div></div>`).join('');
+ const key=`${now.toDateString()}-${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;if(soundEnabled&&[430,450,460,470].includes(mins)&&now.getSeconds()<2&&key!==lastGongKey){lastGongKey=key;gong()}}
+makeFace();render();setInterval(render,250);
+</script>
+</body>
+</html>
